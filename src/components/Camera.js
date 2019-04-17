@@ -38,7 +38,7 @@ class Camera extends Component{
             path: 'images',
           },
         };
-        ImagePicker.showImagePicker(options, response => {
+        ImagePicker.showImagePicker(options,response => {
           console.log('Response = ', response);
      
           if (response.didCancel) {
@@ -51,20 +51,8 @@ class Camera extends Component{
           } else {
             let source = response;
             
-            /*try {
-              let response = await fetch(
-                'https://app1-3223c.firebaseio.com/place.json',{
-                  method:"POST",
-                  body:JSON.stringify( {userName: "react",
-                  password: "123"})}
-              );
-              let responseJson = await response.json();
-              return responseJson.movies;
-            } catch (error) {
-              console.error(error);
-            }*/
-            
-            fetch("https://app1-3223c.firebaseio.com/place.json",{
+           
+           /* fetch("https://app1-3223c.firebaseio.com/place.json",{
               method:"POST",
               body:JSON.stringify( {userName: "react",
               password: "123"})
@@ -75,14 +63,28 @@ class Camera extends Component{
             then(res=>res.json()).
             then(parsedres=>{//console.log(parsedres);
               alert(JSON.stringify(parsedres));
-            });
-            console.log("done");
+            });*/
+            
             // You can also display the image using data:
-            // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+             let source1 = { uri:response.data };
             this.setState({
               filePath: source,
-              pickedImage:{uri:response.uri}
+              pickedImage:{uri:response.uri.base64}
             });
+           console.log("cccc"+JSON.stringify({image:response.data}));
+            fetch("https://us-central1-app1-3223c.cloudfunctions.net/storeImage",{
+              method:"POST",
+              body:JSON.stringify({image:response.data})
+              
+            }).catch((error)=>{
+              console.log("Api call error");
+              alert(error.message);}).
+            then(res=>res.json()).
+            then(parsedRes=>{
+              console.log(parsedRes);
+              alert(JSON.stringify(parsedRes));
+            });
+            console.log("done");
           }
         });
       };
@@ -96,7 +98,7 @@ class Camera extends Component{
           <View style={styles.container}>  
            
             <Image
-            source={{ uri: this.state.filePath.uri }}
+            source={{ uri: this.state.filePath.uri}}
             style={{ width: 250, height: 250,marginTop:20}}
             />
              <View style={styles.button}>
